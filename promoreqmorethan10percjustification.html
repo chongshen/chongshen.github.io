@@ -1,0 +1,48 @@
+<html><head>
+<meta><meta><meta></head>
+<body style="word-wrap: break-word;" onload="fnOnLoad();">
+    <form class="form" style="font-size: 12px; font-family: Arial;">
+        <div class="form-group">
+            <input type="checkbox" class="checkbox" id="chk_hrauto_promoreqsaljustcstitleminpay" onclick="fnToggleOption(this.id)">
+            <label for="chk_hrauto_promoreqsaljustcstitleminpay">Candidate is being appointed through a civil service list and will be paid the minimum for the position</label>
+        </div>
+        <div class="form-group">
+            <input type="checkbox" class="checkbox" id="chk_hrauto_promoreqsaljustmgrrole" onclick="fnToggleOption(this.id)">
+            <label for="chk_hrauto_promoreqsaljustmgrrole">Candidate is being promoted into a managerial title and will no longer be eligible for OT and/or ATG</label>
+        </div>
+        <div class="form-group">
+            <input type="checkbox" class="checkbox" id="chk_hrauto_promoreqsaljustcompoffer" onclick="fnToggleOption(this.id)">
+            <label for="chk_hrauto_promoreqsaljustcompoffer">Candidate is being offered a promotion to match an offer made by another prospective employer</label>
+        </div>
+        <div class="form-group">
+            <input type="checkbox" class="checkbox" id="chk_hrauto_promoreqsaljustother" onclick="fnToggleOption(this.id)">
+            <label for="chk_hrauto_promoreqsaljustother">None of the Above / Candidate is being offered an increase of more than 10% for another reason</label>
+        </div>
+    </form>
+    <script src="ClientGlobalContext.js.aspx" type="text/javascript"></script>
+    <script>
+        //<![CDATA[
+        function fnOnLoad() {
+            var isInitialForm = window.parent.Xrm.Page.getAttribute('hrauto_promoreqstagename').getValue() === 'Initiation';
+            //window.parent.Xrm.Utility.alertDialog('isInitialForm = ' + isInitialForm.toString());
+            var chks = [];
+            chks.push('hrauto_promoreqsaljustcstitleminpay');
+            chks.push('hrauto_promoreqsaljustmgrrole');
+            chks.push('hrauto_promoreqsaljustcompoffer');
+            chks.push('hrauto_promoreqsaljustother');
+            for (var ctr = 0; ctr < chks.length; ctr++) {
+                //window.parent.Xrm.Utility.alertDialog('chks[ctr] = ' + chks[ctr]);
+                document.getElementById('chk_' + chks[ctr]).checked = window.parent.Xrm.Page.getAttribute(chks[ctr]).getValue();
+                document.getElementById('chk_' + chks[ctr]).disabled = !isInitialForm;
+            }
+        }
+        //window.onLoad += fnOnLoad;
+
+        function fnToggleOption(id) {
+            var checked = document.getElementById(id).checked;
+            window.parent.Xrm.Page.getAttribute(id.replace('chk_', '')).setValue(checked);
+        }
+        //]]>
+    </script>
+
+</body></html>
