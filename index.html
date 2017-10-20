@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <title>APTMaps</title>
 
-
     <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css'>
     <link rel='stylesheet prefetch' href='https://fonts.googleapis.com/css?family=Raleway:300,400,500,600,700,800'>
     <link rel='stylesheet prefetch' href='https://decorator.io/cdn/modulr.min.css'>
     <link rel='stylesheet prefetch' href='https://decorator.io/cdn/modules/tooltip.min.css'>
     <link rel="stylesheet" href="style.css">
+
+    <script type="text/javascript" src="main.js"></script>
 
 </head>
 <body>
@@ -17,9 +18,9 @@
     <div class="row header">
         <!-- Navbar Start -->
         <div class="navbar cf height-auto padding-20 transparent -tablet-padding">
-            <a href="#" class="brand text-21 text-white -padding-left -tablet-margin"> <i class="fa fa-building"></i> APTMaps</a>
+            <a href="#" class="brand text-21 text-white -padding-left -tablet-margin"> <i class="fa fa-map"></i> <b>APT</b><i>Maps</i></a>
             <ul class="pull-right menu href-text-white">
-                <li><a href="#"><i class="fa fa-lg fa-support"></i> Help</a></li>
+                <li><a href="#">Help</a></li>
                 <li><a href="#">About Us</a></li>
                 <li><a class="fill-blue" href="HtmlPage.html">DEMO</a></li>
             </ul>
@@ -27,43 +28,37 @@
         <!-- Navbar End -->
         <!-- Row Intro Start -->
         <div class="row text-center padding-bottom-40 push-top">
-            <h1 class="text-white pull-left width-100" style="font-size: 80px">APTMaps </h1>
+            <h1 class="text-white pull-left width-100" style="font-size: 80px"><b>APT</b><i>Maps</i> </h1>
             <h2 class="text-white pull-left width-100">Want to know more about your dream apartment? </h2>
             <p class="text-white">
-                Where will you feel at home? These are complicated questions with many variables to consider...
+                Where will you feel at home? There are complicated questions with many variables to consider...
             </p>
         </div>
         <!-- Row Intro End -->
         <!-- Search Form Start -->
         <div class="wrapper960 center">
             <form class="form l padding-10 cf">
-                <div class="col-10">
-                    <input class="border-white -rounded" type="text" placeholder="Search by city, neighborhood, or address...">
-                </div>
-                <div class="col-2">
-                    <button class="btn blue width-100">Search</button>
+                <div class="col-12">
+                    <input id="searchbar" class="border-white -rounded" type="text" placeholder="Enter an address, then press Enter to search.">
                 </div>
             </form>
+            <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAIxySyW4EE_LqQ9dY_p1uHGysW5qq2gBc&libraries=places&callback=initMap"
+                    async defer></script>
+            <div id="searcherror_div" class="text-center">
+                <p id="searcherror"></p>
+            </div>
         </div>
         <!-- Search Form End -->
+
     </div>
     <!-- Header End -->
     <!-- Content Start -->
     <div class="wrapper960 center padding-v-40 tablet-padding">
-        <!-- First Row Start -->
-        <div class="row flex padding-bottom-20">
-            <div class="col-7">
-                <img class="pull-left width-100" src="https://decorator.io/media/placeholder.jpg" />
-            </div>
-            <div class="col-5 light-silver flex middle">
-                <div class="padding-40">
-                    <h5 class="padding-v-10 text600">Lorem Ipsum</h5>
-                    <p class="text-16 margin-bottom">
-                        Lorem Ipsum.
-                    </p>
-                    <a class="btn l blue width-100 margin-top">Explore Now</a>
-                </div>
-            </div>
+        <div id="map" class="col-4"></div>
+        <div id="infowindow-content">
+            <span id="place-name"></span><br>
+            <span id="place-id"></span><br>
+            <span id="place-address"></span>
         </div>
         <!-- First Row End -->
         <!-- Second Row Start -->
@@ -116,6 +111,7 @@
                     <img class="pull-left width-100" src="https://decorator.io/media/placeholder.png" />
                 </a>
             </div>
+
             <!-- Item End -->
             <!-- Item Start -->
             <div class="col-4">
@@ -172,13 +168,13 @@
                     <!-- Item End -->
                     <!-- Item Start -->
                     <div class="col-6">
-                        <h4 class="text-blue padding-v-20 text300">Thoughts? Contact us!</h4>
+                        <h4 class="text-blue padding-v-20 text300">Subscribe for updates</h4>
                         <!-- Search Right Start  -->
                         <form class="form l blue fill-white col-10">
                             <div class="addon-append">
                                 <input class="border-transparent" type="text" placeholder="Enter your email address">
                                 <span class="append btn border-transparent">
-                                    <button>Send</button>
+                                    <button>Subscribe Now</button>
                                 </span>
                             </div>
                         </form>
