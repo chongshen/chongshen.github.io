@@ -1,16 +1,24 @@
-﻿/*
-  Modulr.css
-  ---------------------
-  @desc: Modular CSS Framework
-  @author: Decorator.io
-  @twitter: https://www.twitter.com/_uloga
-  @source: http://www.decorator.io/modulr
-\--------------------------------------------*/
+/*___id___*/
+#map {
+    height: 600px;
+    width: 100%;
+    margin-bottom: 20px;
+}
 
-/* Inspired by AIRBNB */
+#place-name {
+    font-weight: bold;
+}
 
-/* __ extra edits __ */
+#searcherror {
+    color: #D8000C;
+    background-color: #FFD2D2;
+    font-size: 20px;
+    padding: 6px;
+}
 
+#searcherror_div {
+    display: none;
+}
 .header,
 .footer{
   min-height: 560px;
@@ -48,7 +56,7 @@
   border-top: 1px solid rgba(255,255,255,0.16);
 }
 
-/* __ colors __ */
+/*___colors___*/
 
 .light-silver{
   background: #e8e8e8;
