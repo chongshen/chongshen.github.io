@@ -1,3 +1,5 @@
+var placeobj = {};
+
 function initMap() {
     var map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 40.7128, lng: -74.0060 },
@@ -9,7 +11,12 @@ function initMap() {
 
     // Create the search box and link it to the UI element.
     var input = document.getElementById('searchbar');
-    var autocomplete = new google.maps.places.Autocomplete(input, { placeIdOnly: true });
+    var autocomplete = new google.maps.places.Autocomplete(input,
+        {
+            placeIdOnly: true,
+            componentRestrictions: { country: "US" }
+        }
+        );
     autocomplete.bindTo('bounds', map);
     google.maps.event.addDomListener(input, 'keydown', function(event) { 
         if (event.keyCode === 13) { 
@@ -32,7 +39,6 @@ function initMap() {
     autocomplete.addListener('place_changed', function () {
         infowindow.close();
         var place = autocomplete.getPlace();
-
         if (!place.place_id) {
             fnSearchError(true, "Please make sure to input an actual address. ");
             return;
@@ -44,7 +50,9 @@ function initMap() {
                 fnSearchError(true,'Geocoder failed due to: ' + status);
                 return;
             }
-            map.setZoom(11);
+            fnSearchError(false, '');
+            console.log(results)
+            map.setZoom(16);
             map.setCenter(results[0].geometry.location);
             // Set the position of the marker using the place ID and location.
             marker.setPlace({
@@ -52,11 +60,17 @@ function initMap() {
                 location: results[0].geometry.location
             });
             marker.setVisible(true);
-            infowindowContent.children['place-name'].textContent = place.name;
-            infowindowContent.children['place-id'].textContent = '';
-            infowindowContent.children['place-address'].textContent =
-                results[0].formatted_address;
-            //infowindow.open(map, marker);
+            //set placeobj value
+            placeobj.formatted_address = results[0].formatted_address;
+            placeobj.place_id = place.place_id;
+            placeobj.name = place.name;
+            placeobj.lat = results[0].geometry.location.lat();
+            placeobj.lng = results[0].geometry.location.lng();
+            console.log(placeobj);
+            //display results
+            fnDisplayResults(placeobj);
+            
+            //infowindow.open(map, marker); //comment this to stop auto-displaying result tag
         });
     });
 }
@@ -72,4 +86,11 @@ function fnSearchError(bool, message) {
         document.getElementById("searcherror").innerHTML = message;
     }
 
+}
+
+function fnDisplayResults(placeobj) {
+    var infowindowContent = document.getElementById('infowindow-content');
+    infowindowContent.children['place-name'].textContent = placeobj.name;
+    infowindowContent.children['place-id'].textContent = ''; //place.place_id;
+    infowindowContent.children['place-address'].textContent = placeobj.formatted_address;
 }
