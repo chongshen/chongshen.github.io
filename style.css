@@ -1,0 +1,121 @@
+﻿/*___id___*/
+#map {
+    height: 600px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+#place-name {
+    font-weight: bold;
+}
+
+#searcherror {
+    color: #D8000C;
+    background-color: #FFD2D2;
+    font-size: 18px;
+    padding: 6px;
+}
+
+#searcherror_div {
+    display: none;
+}
+
+.center-container {
+    position: absolute;
+}
+.header,
+.footer{
+  min-height: 560px;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+  background: url("images/new_york_background.jpg") no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.footer{
+  min-height: 380px;
+}
+.form{
+  background: rgba(0,0,0,0.5) !important;
+}
+.form > div{
+  margin-bottom: 0;
+}
+.form *{
+  transition: none;
+}
+.form select{
+  border-left-color: #dedede !important;
+}
+
+.push-top{
+  margin-top: 90px;
+}
+.addon-append input,
+.addon-append .btn{
+  border-radius: 0;
+  font-size: 17px !important;
+}
+.social{
+  border-top: 1px solid rgba(255,255,255,0.16);
+}
+
+/*6 sections*/
+#noise-div, 
+#crime-div,
+#mouse-div,
+#price-div,
+#commute-div,
+#parking-div,
+#show-all-div
+{
+    display: none;
+}
+
+
+/*section hover effects*/
+.section-container:hover .section-background-image {
+  opacity: 0.5;
+}
+
+.section-container:hover .section-hidden {
+  opacity: 1;
+}
+.section-hidden {
+  /*transition: .5s ease;*/
+  opacity: 0; /*hidden by default*/
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%)
+}
+
+.section-hidden-text {
+  background-color: #2196F3;
+  color: white;
+  font-size: 16px;
+  padding: 10px;
+}
+/*___colors___*/
+
+.light-silver{
+  background: #e8e8e8;
+}
+
+.background-blue{
+  background: #2196F3;
+}
+
+.rgba{
+  background: rgba(0,0,0,0.7);
+  min-height: 380px;
+}
+
+@media (max-width: 800px){
+  .navbar{
+    background: #2196F3;
+  }
+}

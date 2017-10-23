@@ -1,0 +1,268 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>APTMaps</title>
+
+    <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css'>
+    <link rel='stylesheet' href='css/fonts.css'>
+    <link rel='stylesheet' href='css/modulr.min.css'>
+    <link rel='stylesheet' href='css/tooltip.min.css'>
+    <link rel="stylesheet" href="style.css">
+    <script src="jquery/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+</head>
+<body>
+    <!-- Header Start -->
+    <div class="row header">
+        <!-- Navbar Start -->
+        <div class="navbar cf height-auto padding-20 transparent -tablet-padding">
+            <a href="#" class="brand text-21 text-white -padding-left -tablet-margin"> <i class="fa fa-map"></i> <b>APT</b><i>Maps</i></a>
+            <ul class="pull-right menu href-text-white">
+                <li><a href="#">Help</a></li>
+                <li><a href="#">About Us</a></li>
+                <li><a class="fill-blue" href="HtmlPage.html">DEMO</a></li>
+            </ul>
+        </div>
+        <!-- Navbar End -->
+        <!-- Row Intro Start -->
+        <div class="row text-center padding-bottom-40 push-top">
+            <h1 class="text-white pull-left width-100" style="font-size: 80px"><b>APT</b><i>Maps</i> </h1>
+            <h2 class="text-white pull-left width-100">Want to know more about your dream apartment? </h2>
+            <p class="text-white">
+                Where will you feel at home? There are complicated questions with many variables to consider...
+            </p>
+        </div>
+        <!-- Row Intro End -->
+        <!-- Search Form Start -->
+        <div class="wrapper960 center">
+            <form class="form l padding-10 cf">
+                <div class="col-12">
+                    <input id="searchbar" class="border-white -rounded" type="text" placeholder="Enter an address, then press Enter to search.">
+                </div>
+            </form>
+            <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAIxySyW4EE_LqQ9dY_p1uHGysW5qq2gBc&libraries=places&callback=initMap"
+                    async defer></script>
+            <div id="searcherror_div" class="text-center">
+                <p id="searcherror"></p>
+            </div>
+        </div>
+        <!-- Search Form End -->
+
+    </div>
+    <!-- Header End -->
+    <!-- Content Start -->
+    <div class="wrapper960 center padding-v-40 tablet-padding">
+        <div id="map" class="col-4"></div>
+        <div id="infowindow-content">
+            <span id="place-name"></span><br>
+            <span id="place-address"></span>
+        </div>
+        <table id="result-table" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>column_name</th>
+                    <th>column_name</th>
+                    <th>column_name</th>
+                    <th>column_name</th>
+                    <th>column_name</th>
+                    <th>column_name</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>column_name</th>
+                    <th>column_name</th>
+                    <th>column_name</th>
+                    <th>column_name</th>
+                    <th>column_name</th>
+                    <th>column_name</th>
+                </tr>
+            </tfoot>
+            <tbody>
+                <tr class="odd">
+                    <td>data</td>
+                    <td>data</td>
+                    <td>data</td>
+                    <td>data</td>
+                    <td>data</td>
+                    <td>data</td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- First Row End -->
+        <!-- Second Row Start -->
+        <div class="row padding-v-40 tablet-padding-top col-gutter-20">
+            <h3 id="summary" class="text-center padding-bottom"></h3>
+            <p id="summary-text" class="padding-bottom-10 text-center text-16">
+            </p>
+            <!-- Item Start -->
+            <div id="noise-div" class="col-4">
+                <a id="noise-a" href="#map" class="section-container pull-left width-100">
+                    <h5 id="noise-text" class="center-container text-center background-blue"></h5>
+                    <h5 class="absolute-bottom padding-10 light-silver">NOISE</h5>
+                    <img class="pull-left width-100 silver section-background-image" src="images/noise.png" />
+                    <div class="section-hidden">
+                        <div class="section-hidden-text">Display Results</div>
+                    </div>
+                </a>
+            </div>
+            <!-- Item End -->
+            <!-- Item Start -->
+            <div id="crime-div" class="col-4">
+                <a href="#" class="section-container pull-left width-100">
+                    <h5 id="crime-text" class="center-container text-center"></h5>
+                    <h5 class="absolute-bottom padding-10 light-silver">CRIME</h5>
+                    <img class="pull-left width-100 silver section-background-image" src="images/crime.png" />
+                    <div class="section-hidden">
+                        <div class="section-hidden-text">Display Results</div>
+                    </div>
+                </a>
+            </div>
+            <!-- Item End -->
+            <!-- Item Start -->
+            <div id="mouse-div" class="col-4">
+                <a href="#" class="section-container pull-left width-100">
+                    <h5 id="mouse-text" class="center-container text-center"></h5>
+                    <h5 class="absolute-bottom padding-10 light-silver">RODENT</h5>
+                    <img class="pull-left width-100 silver section-background-image" src="images/mouse.png" />
+                    <div class="section-hidden">
+                        <div class="section-hidden-text">Display Results</div>
+                    </div>
+                </a>
+            </div>
+            <!-- Item End -->
+            <!-- Item Start -->
+            <div id="price-div" class="col-4">
+                <a href="#" class="section-container pull-left width-100">
+                    <h5 id="price-text" class="center-container text-center"></h5>
+                    <h5 class="absolute-bottom padding-10 light-silver">PRICE</h5>
+                    <img class="pull-left width-100 silver section-background-image" src="images/price.png" />
+                    <div class="section-hidden">
+                        <div class="section-hidden-text">Display Results</div>
+                    </div>
+                </a>
+            </div>
+            <!-- Item End -->
+            <!-- Item Start -->
+            <div id="commute-div" class="col-4">
+                <a href="#" class="section-container pull-left width-100">
+                    <h5 id="commute-text" class="center-container text-center"></h5>
+                    <h5 class="absolute-bottom padding-10 light-silver">COMMUTE</h5>
+                    <img class="pull-left width-100 silver section-background-image" src="images/subway.png" />
+                    <div class="section-hidden">
+                        <div class="section-hidden-text">Display Results</div>
+                    </div>
+                </a>
+            </div>
+            <!-- Item End -->
+            <!-- Item Start -->
+            <div id="parking-div" class="col-4">
+                <a href="#" class="section-container pull-left width-100">
+                    <h5 id="parking-text" class="center-container text-center"></h5>
+                    <h5 class="absolute-bottom padding-10 light-silver">PARKING</h5>
+                    <img class="pull-left width-100 silver section-background-image" src="images/parking.png" />
+                    <div class="section-hidden">
+                        <div class="section-hidden-text">Display Results</div>
+                    </div>
+                </a>
+            </div>
+            <!-- Item End -->
+            <div id="show-all-div" class="row flex center padding-top-30 tablet-padding-top">
+            </div>
+        </div>
+        <!-- Second Row End -->
+    </div>
+    <!-- Content End -->
+    <!-- Forth Row Start -->
+    <div class="row footer">
+        <!-- Row Rgba Start -->
+        <div class="row rgba padding-top-20">
+            <!-- Wrapper Start -->
+            <div class="wrapper960 center">
+                <!-- About Row Start -->
+                <div class="row padding-v-40 tablet-padding">
+                    <!-- Item Start -->
+                    <div class="col-3">
+                        <h4 class="text-blue text300 padding-bottom-10">Project</h4>
+                        <ul class="href-text-gray hover-href-text-underline">
+                            <li><a href="#">About</a></li>
+                            <li><a href="#">Members</a></li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="#">Policies</a></li>
+                            <li><a href="#">Terms & Privacy</a></li>
+                        </ul>
+                    </div>
+                    <!-- Item End  -->
+                    <!-- Item Start -->
+                    <div class="col-3">
+                        <h4 class="text-blue text300 padding-bottom-10">Support</h4>
+                        <ul class="href-text-gray hover-href-text-underline">
+                            <li><a href="#">Support Links</a></li>
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">Knowledge Base</a></li>
+                            <li><a href="#">Support Blog</a></li>
+                            <li><a href="#">Support Policies</a></li>
+                            <li><a href="#">Privacy</a></li>
+                        </ul>
+                    </div>
+                    <!-- Item End -->
+                    <!-- Item Start -->
+                    <div class="col-6">
+                        <h4 class="text-blue padding-v-20 text300">Subscribe for updates</h4>
+                        <!-- Search Right Start  -->
+                        <form class="form l blue fill-white col-10">
+                            <div class="addon-append">
+                                <input class="border-transparent" type="text" placeholder="Enter your email address">
+                                <span class="append btn border-transparent">
+                                    <button>Subscribe Now</button>
+                                </span>
+                            </div>
+                        </form>
+                        <!-- Search Right End  -->
+                    </div>
+                    <!-- Item Start -->
+                </div>
+                <!-- About Row End -->
+                <!-- Social Start -->
+                <div class="row social button-center padding-v-20">
+                    <a href="#" class="btn icon border blue round hover-tooltip margin-right">
+                        <span class="tooltip top">Twitter</span>
+                        <i class="fa fa-twitter"></i>
+                    </a>
+                    <a href="#" class="btn icon border blue round hover-tooltip margin-right">
+                        <span class="tooltip top">Facebook</span>
+                        <i class="fa fa-facebook"></i>
+                    </a>
+                    <a href="#" class="btn icon border blue round hover-tooltip margin-right">
+                        <span class="tooltip top">Linkedin</span>
+                        <i class="fa fa-linkedin"></i>
+                    </a>
+                    <a href="#" class="btn icon border blue round hover-tooltip margin-right">
+                        <span class="tooltip top">Google</span>
+                        <i class="fa fa-google"></i>
+                    </a>
+                    <a href="#" class="btn icon border blue round hover-tooltip margin-right">
+                        <span class="tooltip top">Instagram</span>
+                        <i class="fa fa-instagram"></i>
+                    </a>
+                    <a href="#" class="btn icon border blue round hover-tooltip margin-right">
+                        <span class="tooltip top">Pinterest</span>
+                        <i class="fa fa-pinterest"></i>
+                    </a>
+                    <p class="text-center text-gray padding-v-20">Copyright APTMaps </p>
+                </div>
+                <!-- Social End -->
+            </div>
+            <!-- Wrapper End -->
+        </div>
+        <!-- Row Rgba End -->
+    </div>
+    <!-- Forth Row End -->
+    <script src='https://decorator.io/cdn/navbar.js'></script>
+
+</body>
+</html>
