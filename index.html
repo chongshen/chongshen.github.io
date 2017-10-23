@@ -9,7 +9,7 @@
     <link rel='stylesheet prefetch' href='https://decorator.io/cdn/modulr.min.css'>
     <link rel='stylesheet prefetch' href='https://decorator.io/cdn/modules/tooltip.min.css'>
     <link rel="stylesheet" href="style.css">
-
+    <script src="jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="main.js"></script>
 
 </head>
@@ -57,7 +57,6 @@
         <div id="map" class="col-4"></div>
         <div id="infowindow-content">
             <span id="place-name"></span><br>
-            <span id="place-id"></span><br>
             <span id="place-address"></span>
         </div>
         <!-- First Row End -->
@@ -70,7 +69,8 @@
             <!-- Item Start -->
             <div class="col-4">
                 <a href="#" class="pull-left width-100 silver">
-                    <h5 class="absolute-bottom padding-20">ONE</h5>
+                    <h4 id="noise-text" class="text-center"></h4>
+                    <h5 class="absolute-bottom padding-20">NOISE</h5>
                     <img class="pull-left width-100" src="https://decorator.io/media/placeholder.png" />
                 </a>
             </div>
@@ -78,7 +78,8 @@
             <!-- Item Start -->
             <div class="col-4">
                 <a href="#" class="pull-left width-100 silver">
-                    <h5 class="absolute-bottom padding-20">TWO</h5>
+                    <h4 id="crime-text" class="text-center"></h4>
+                    <h5 class="absolute-bottom padding-20">CRIME</h5>
                     <img class="pull-left width-100" src="https://decorator.io/media/placeholder.png" />
                 </a>
             </div>
@@ -86,7 +87,35 @@
             <!-- Item Start -->
             <div class="col-4">
                 <a href="#" class="pull-left width-100 silver">
-                    <h5 class="absolute-bottom padding-20">THREE</h5>
+                    <h4 id="rodent-text" class="text-center"></h4>
+                    <h5 class="absolute-bottom padding-20">RODENT</h5>
+                    <img class="pull-left width-100" src="https://decorator.io/media/placeholder.png" />
+                </a>
+            </div>
+            <!-- Item End -->
+            <!-- Item Start -->
+            <div class="col-4">
+                <a href="#" class="pull-left width-100 silver">
+                    <h4 id="rent-text" class="text-center"></h4>
+                    <h5 class="absolute-bottom padding-20">PRICE</h5>
+                    <img class="pull-left width-100" src="https://decorator.io/media/placeholder.png" />
+                </a>
+            </div>
+            <!-- Item End -->
+            <!-- Item Start -->
+            <div class="col-4">
+                <a href="#" class="pull-left width-100 silver">
+                    <h4 id="commute-text" class="text-center"></h4>
+                    <h5 class="absolute-bottom padding-20">COMMUTE</h5>
+                    <img class="pull-left width-100" src="https://decorator.io/media/placeholder.png" />
+                </a>
+            </div>
+            <!-- Item End -->
+            <!-- Item Start -->
+            <div class="col-4">
+                <a href="#" class="pull-left width-100 silver">
+                    <h4 id="parking-text" class="text-center"></h4>
+                    <h5 class="absolute-bottom padding-20">PARKING</h5>
                     <img class="pull-left width-100" src="https://decorator.io/media/placeholder.png" />
                 </a>
             </div>
@@ -98,39 +127,6 @@
             </div>
         </div>
         <!-- Second Row End -->
-        <!-- Third Row Start -->
-        <div class="row padding-top-40 tablet-padding-top col-gutter-20">
-            <h3 class="text-center padding-bottom">Promoted</h3>
-            <p class="padding-bottom-20 text-center text-16">
-                Lorem Ipsum 
-            </p>
-            <!-- Item Start -->
-            <div class="col-8">
-                <a href="#" class="pull-left width-100 silver">
-                    <h5 class="absolute-bottom padding-20">PROMO BIG</h5>
-                    <img class="pull-left width-100" src="https://decorator.io/media/placeholder.png" />
-                </a>
-            </div>
-
-            <!-- Item End -->
-            <!-- Item Start -->
-            <div class="col-4">
-                <a href="#" class="pull-left width-100 silver">
-                    <h5 class="absolute-bottom padding-20">PROMO ONE</h5>
-                    <img class="pull-left width-100" src="https://decorator.io/media/placeholder.png" />
-                </a>
-            </div>
-            <!-- Item End -->
-            <!-- Item Start -->
-            <div class="col-4">
-                <a href="#" class="pull-left width-100 silver">
-                    <h5 class="absolute-bottom padding-20">PROMO TWO</h5>
-                    <img class="pull-left width-100" src="https://decorator.io/media/placeholder.png" />
-                </a>
-            </div>
-            <!-- Item End -->
-        </div>
-        <!-- Third Row End -->
     </div>
     <!-- Content End -->
     <!-- Forth Row Start -->
