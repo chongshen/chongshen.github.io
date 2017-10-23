@@ -1,4 +1,4 @@
-﻿/*___id___*/
+/*___id___*/
 #map {
     height: 600px;
     width: 100%;
@@ -27,7 +27,7 @@
 .footer{
   min-height: 560px;
   text-shadow: 0 1px 1px rgba(0,0,0,0.3);
-  background: url("images/new_york_background.jpg") no-repeat center center fixed;
+  background: url("new_york_background.jpg") no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
