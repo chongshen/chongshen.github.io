@@ -1,4 +1,20 @@
 /*___id___*/
+/*
+#floating-panel {
+    position: absolute;
+    top: 10px;
+    left: 25%;
+    z-index: 5;
+    background-color: #fff;
+    padding: 5px;
+    border: 1px solid #999;
+    text-align: center;
+    font-family: 'Roboto','sans-serif';
+    line-height: 30px;
+    padding-left: 10px;
+}
+*/
+
 #map {
     height: 600px;
     width: 100%;
@@ -83,6 +99,7 @@
 .section-container:hover .section-hidden {
   opacity: 1;
 }
+
 .section-hidden {
   /*transition: .5s ease;*/
   opacity: 0; /*hidden by default*/
@@ -99,6 +116,11 @@
   font-size: 16px;
   padding: 10px;
 }
+
+    .section-hidden-text:hover {
+        cursor: pointer;
+    }
+
 /*___colors___*/
 
 .light-silver{
