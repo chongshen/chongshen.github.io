@@ -90,6 +90,8 @@
     display: none;
 }
 
+#result-view-container {
+}
 
 /*section hover effects*/
 .section-container:hover .section-background-image {
