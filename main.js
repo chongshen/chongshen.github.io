@@ -10,6 +10,7 @@ function initMap() {
     });
     fnHideBusinessFeatures(map);
     //fnGetUserGeolocation(map);
+
     // Create the search box and link it to the UI element.
     var input = document.getElementById('searchbar');
     var autocomplete = new google.maps.places.Autocomplete(input,
@@ -78,12 +79,9 @@ function initMap() {
         console.log("place.geometry.location: ", place.geometry.location);
         marker.setPosition(place.geometry.location);
         marker.setVisible(true);
-        //markers.push(marker);
-        // display results text on webpage
         fnUpdatePlaceObj(place);
         console.log(placeobj);
         fnDisplayInputAddress(placeobj);
-        // ajax to 311Noise
         fnGet311NoiseData(placeobj, undefined);
     });
 }
@@ -248,13 +246,17 @@ function fnDisplayResultButton() {
 }
 
 function fnDisplayResultView() {
-    var itemArr = ["hi", "hi", "hi", "hi", "hi", "hi"];
-    var columnHTML = "";
-    for (i = 0; i < itemArr.length; i++) {
-        columnHTML += "<th>" + itemArr[i] + "</th>";
+    var columnArr = ["Date", "Time", "Noise"];
+    var itemArr = ["10/12/2017", "00:12AM", "Noise: Construction Before/After Hours (NM1)"]
+    var columnHTML = "",
+        itemHTML   = "";
+    for (i = 0; i < columnArr.length; i++) {
+        columnHTML += "<th>" + columnArr[i] + "</th>";
+        itemHTML += "<td>" + itemArr[i] + "</td>";
     }
     console.log(columnHTML);
-    var html = "<thead>"
+    var html_headfoot =
+               "<thead>"
                     + "<tr>"
                         + columnHTML
                     + "</tr>"
@@ -265,7 +267,14 @@ function fnDisplayResultView() {
                      + "</tr>"
               + "</tfoot>"
     ;
-    document.getElementById("result-view").innerHTML = html;
+    var html_body =
+               "<tbody>"
+                    + "<tr>"
+                        + itemHTML
+                    + "</tr>"
+             + "</tbody>"
+    ;
+    document.getElementById("result-view").innerHTML = html_headfoot + html_body;
 }
 
 function fnDisplayResultMarker(latvalue, lngvalue) {
