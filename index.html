@@ -57,11 +57,18 @@
     <!-- Content Start -->
     <div class="wrapper960 center padding-v-40 tablet-padding">
         <div id="map" class="col-4"></div>
-        <div id="infowindow-content">
+        <div id="infowindow-content" class="light-silver padding-10">
             <span id="place-name"></span><br>
             <span id="place-address"></span>
         </div>
-        <table id="result-table" class="display" cellspacing="0" width="100%">
+        <!--
+        <div id="floating-panel" class="col-2">
+            <input onclick="fnClearMarkers()" type=button value="Hide Markers">
+            <input onclick="fnShowMarkers()" type=button value="Show All Markers">
+            <input onclick="fnDeleteMarkers()" type=button value="Delete Markers">
+        </div>   
+        -->
+        <table id="result-view" cellspacing="0">
             <thead>
                 <tr>
                     <th>column_name</th>
@@ -83,7 +90,7 @@
                 </tr>
             </tfoot>
             <tbody>
-                <tr class="odd">
+                <tr>
                     <td>data</td>
                     <td>data</td>
                     <td>data</td>
@@ -101,14 +108,14 @@
             </p>
             <!-- Item Start -->
             <div id="noise-div" class="col-4">
-                <a id="noise-a" href="#map" class="section-container pull-left width-100">
+                <div id="noise-a" href="#map" class="section-container pull-left width-100">
                     <h5 id="noise-text" class="center-container text-center background-blue"></h5>
                     <h5 class="absolute-bottom padding-10 light-silver">NOISE</h5>
                     <img class="pull-left width-100 silver section-background-image" src="noise.png" />
                     <div class="section-hidden">
-                        <div class="section-hidden-text">Display Results</div>
+                        <div class="section-hidden-text" onclick="fnDisplayResultButton()">Display Results</div>
                     </div>
-                </a>
+                </div>
             </div>
             <!-- Item End -->
             <!-- Item Start -->
