@@ -314,3 +314,13 @@ function fnToggleSectionVisibility(bool) {
         }
     }
 }
+
+function fnToggleResultViewVisibility(bool) {
+    var div = document.getElementById("result-view-container");
+    if (bool == true) {
+        div.style.display = "block !important";
+    }
+    else {
+        div.style.display = "none !important";
+    }
+}
