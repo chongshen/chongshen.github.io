@@ -1,5 +1,7 @@
-﻿var placeobj = {};
+var placeobj = {};
 var map;
+var noise_data = [];
+var markers = [];
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 40.7128, lng: -74.0060 },
@@ -7,7 +9,7 @@ function initMap() {
         mapTypeControl: false
     });
     fnHideBusinessFeatures(map);
-    fnGetUserGeolocation(map);
+    //fnGetUserGeolocation(map);
     // Create the search box and link it to the UI element.
     var input = document.getElementById('searchbar');
     var autocomplete = new google.maps.places.Autocomplete(input,
@@ -17,9 +19,9 @@ function initMap() {
         );
     autocomplete.bindTo('bounds', map);
     //DOM Listeners
-    google.maps.event.addDomListener(input, 'keydown', function(event) { 
-        if (event.keyCode === 13) { 
-            event.preventDefault(); 
+    google.maps.event.addDomListener(input, 'keydown', function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
         }
     });
 
@@ -54,6 +56,7 @@ function initMap() {
     autocomplete.addListener('place_changed', function () {
         infowindow.close();
         marker.setVisible(false);
+        fnDeleteMarkers();
         fnToggleSectionVisibility(false);
         var place = autocomplete.getPlace();
         console.log("place: ", place);
@@ -65,20 +68,23 @@ function initMap() {
         // If the place has a geometry, then present it on a map.
         if (place.geometry.viewport) {
             map.fitBounds(place.geometry.viewport);
+            map.setCenter(place.geometry.location);
+            map.setZoom(18);
         } else {
             map.setCenter(place.geometry.location);
-            map.setZoom(17);
+            map.setZoom(21);
         }
         // Set the position of the marker.
         console.log("place.geometry.location: ", place.geometry.location);
         marker.setPosition(place.geometry.location);
         marker.setVisible(true);
+        //markers.push(marker);
         // display results text on webpage
         fnUpdatePlaceObj(place);
         console.log(placeobj);
         fnDisplayInputAddress(placeobj);
         // ajax to 311Noise
-        fnGet311NoiseData(placeobj);
+        fnGet311NoiseData(placeobj, undefined);
     });
 }
 
@@ -99,23 +105,44 @@ function fnHideBusinessFeatures() {
         ]
     };
     map.setOptions({ styles: styles['hide'] });
+}
 
+// Sets the map on all markers in the array.
+function fnSetMapOnAll(map) {
+    for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(map);
+    }
+}
+
+// Removes the markers from the map, but keeps them in the array.
+function fnClearMarkers() {
+    fnSetMapOnAll(null);
+}
+
+// Shows any markers currently in the array.
+function fnShowMarkers() {
+    fnSetMapOnAll(map);
+}
+
+// Deletes all markers in the array by removing references to them.
+function fnDeleteMarkers() {
+    fnClearMarkers();
+    markers = [];
 }
 
 function fnGetUserGeolocation() {
     // Try HTML5 geolocation.
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
+        navigator.geolocation.getCurrentPosition(function (position) {
             var pos = {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude
             };
-
             //infoWindow.setPosition(pos);
             //infoWindow.setContent('Location found.');
             //infoWindow.open(map);
             map.setCenter(pos);
-            var curMarker= new google.maps.Marker({
+            var curMarker = new google.maps.Marker({
                 position: pos,
                 icon: {
                     url: "images/currentlocation.png",
@@ -125,7 +152,8 @@ function fnGetUserGeolocation() {
                 title: "You're here",
                 animation: google.maps.Animation.DROP,
             });
-        }, function() {
+            markers.push(marker);
+        }, function () {
             console.log("The Geolocation service failed.");
         });
     } else {
@@ -172,7 +200,7 @@ function fnDisplayInputAddress(placeobj) {
 function fnGet311NoiseData(placeobj, diameter) {
     console.log("fnGet311NoiseData called with placeobj: ", placeobj);
     console.log("diameter: ", diameter);
-    if (diameter==undefined)
+    if (diameter == undefined)
         diameter = 100;
     console.log("diameter: ", diameter);
     var requestUrl = "https://data.cityofnewyork.us/resource/fhrw-4uyv.json"
@@ -186,31 +214,73 @@ function fnGet311NoiseData(placeobj, diameter) {
             "$limit": 10000,
             "$$app_token": "GLPXsrxLKiRZJ6nUO5kwCdw3p"
         }
-    }).done(function (data, diameter){
+    }).done(function (data, diameter) {
+        console.log("fnGet311NoiseData returned data: ", data);
         fnSuccessCallBack("noise-text", data, diameter);
-        //testing
-        //fnDisplayResultMarker();
+        noise_data = data;
+        //fnDisplayResultMarker(40,-73);
     });
 }
 
 function fnSuccessCallBack(textid, data, diameter) {
     console.log("fnSuccessCallBack called");
     console.log("diameter: ", diameter);
-    //display 6 sections
     fnToggleSectionVisibility(true);
     if (fnIsNumber(diameter))
         document.getElementById(textid).innerHTML = "We found " + data.length + " noise complaints within " + diameter + " meters nearby.";
     else
         document.getElementById(textid).innerHTML = "We found " + data.length + " noise complaints nearby.";
-    console.log(data);//debug
 }
 
-function fnDisplayResultMarker() {
-    pos = { lat: 40.71910536292321, lng: -73.99119142426758 };
+function fnDisplayResultButton() {
+    fnDeleteMarkers();
+    console.log("fnDisplayResultButton called. placeobj: ", placeobj);
+    //fnDisplayResultMarker(placeobj.lat, placeobj.lng);
+    console.log("fnDisplayResultButton says: noise_data = ", noise_data);
+    var latvalue,
+        lngvalue;
+    for (i = 0; i < noise_data.length; i++) {
+        latvalue = Number.parseFloat(noise_data[i].latitude);
+        lngvalue = Number.parseFloat(noise_data[i].longitude);
+        fnDisplayResultMarker(latvalue, lngvalue);
+    }
+    fnDisplayResultView();
+}
+
+function fnDisplayResultView() {
+    var itemArr = ["hi", "hi", "hi", "hi", "hi", "hi"];
+    var columnHTML = "";
+    for (i = 0; i < itemArr.length; i++) {
+        columnHTML += "<th>" + itemArr[i] + "</th>";
+    }
+    console.log(columnHTML);
+    var html = "<thead>"
+                    + "<tr>"
+                        + columnHTML
+                    + "</tr>"
+             + "</thead>"
+             + "<tfoot>"
+                     + "<tr>"
+                         + columnHTML
+                     + "</tr>"
+              + "</tfoot>"
+    ;
+    document.getElementById("result-view").innerHTML = html;
+}
+
+function fnDisplayResultMarker(latvalue, lngvalue) {
+    //pos = { lat: 40.71910536292321, lng: -73.99119142426758 };
+    pos = { lat: latvalue, lng: lngvalue };
     var marker = new google.maps.Marker({
         position: pos,
-        map: map
+        icon: {
+            url: "images/pin.png",
+            scaledSize: new google.maps.Size(32, 32)
+        },
+        map: map,
+        animation: google.maps.Animation.DROP
     });
+    markers.push(marker);
 }
 
 function fnToggleSectionVisibility(bool) {
