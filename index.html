@@ -117,7 +117,12 @@
                     <h5 class="absolute-bottom padding-10 light-silver">NOISE</h5>
                     <img class="pull-left width-100 silver section-background-image" src="noise.png" />
                     <div class="section-hidden">
-                        <div class="section-hidden-text" onclick="fnDisplayResultButton()">Display Results</div>
+                        <div id="display-noise-button" class="section-hidden-text">Display Results</div>
+                        <script>
+                            $("#display-noise-button").click(function () {
+                                fnDisplayResultButton('noise_data');
+                            });
+                        </script>
                     </div>
                 </div>
             </div>
