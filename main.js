@@ -1,7 +1,11 @@
+// Global variables
 var placeobj = {};
 var map;
 var noise_data = [];
 var markers = [];
+var marker;
+var markerpin = false;
+
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 40.7128, lng: -74.0060 },
@@ -28,31 +32,55 @@ function initMap() {
 
     //declare infowindow
     var infowindow = new google.maps.InfoWindow();
-    var infowindowContent = document.getElementById('infowindow-content');
-    infowindow.setContent(infowindowContent);
 
     //declare an empty marker object
-    var marker = new google.maps.Marker({
+    marker = new google.maps.Marker({
         map: map,
         draggable: true,
         anchorPoint: new google.maps.Point(0, -29)
     });
 
-    //marker listeners
+    //marker listener: click
     marker.addListener('click', function () {
         console.log("marker clicked");
+        markerpin = true;
+        //infowindow.open(map, marker);
+    });
+    //marker listener: dragging
+    marker.addListener('drag', function () {
+        console.log("marker dragged");
+        infowindow.close();
+        fnDeleteMarkers();
+        fnDisplayResultView(false);
+        fnToggleSectionVisibility(false);
+        fnUpdatePlaceObjWithMarker();
+        fnDisplayInputAddress();
+    });
+    //marker listener: dragend
+    marker.addListener('dragend', function () {
+        console.log("marker drag ended");
+        infowindow.close();
+        fnDeleteMarkers();
+        fnDisplayResultView(false);
+        fnToggleSectionVisibility(false);
+        map.setCenter(marker.position);
+        fnUpdatePlaceObjWithMarker();
+        fnDisplayInputAddress();
+        fnSetInfoWindowContent(infowindow);
+        fnMapZoomIn();
+        fnGet311NoiseData(undefined);
+    });
+    //marker listener: mouseover/hover
+    marker.addListener('mouseover', function () {
+        console.log("marker hovered");
         infowindow.open(map, marker);
     });
-    marker.addListener('drag', function () {
-        infowindow.close();
-        console.log("marker dragging");
+    //marker listener: mouseout
+    marker.addListener('mouseout', function () {
+        console.log("marker mouseout");
+        if (markerpin == false)
+            infowindow.close();
     });
-    marker.addListener('dragend', function () {
-        console.log("marker drag ended at marker: ", marker);
-        console.log("marker position: lat", marker.position.lat());
-        console.log("marker position: lng", marker.position.lng());
-    });
-
     //autocomplete listeners
     autocomplete.addListener('place_changed', function () {
         infowindow.close();
@@ -70,22 +98,29 @@ function initMap() {
         if (place.geometry.viewport) {
             map.fitBounds(place.geometry.viewport);
             map.setCenter(place.geometry.location);
-            map.setZoom(18);
+            fnMapZoomIn();
         } else {
             map.setCenter(place.geometry.location);
-            map.setZoom(21);
+            fnMapZoomIn();
         }
         // Set the position of the marker.
         console.log("place.geometry.location: ", place.geometry.location);
         marker.setPosition(place.geometry.location);
         marker.setVisible(true);
-        fnUpdatePlaceObj(place);
-        console.log(placeobj);
-        fnDisplayInputAddress(placeobj);
-        fnGet311NoiseData(placeobj, undefined);
+        fnUpdatePlaceObjWithPlace(place);
+        fnSetInfoWindowContent(infowindow);
+        fnDisplayInputAddress();
+        fnGet311NoiseData(undefined);
     });
 }
 
+function fnMapZoomIn() {
+    map.setZoom(18);
+}
+
+function fnMapZoomOut() {
+    map.setZoom(13);
+}
 
 function fnHideBusinessFeatures() {
     var styles = {
@@ -180,30 +215,46 @@ function fnSearchError(bool, message) {
 
 }
 
-function fnUpdatePlaceObj(place) {
+function fnUpdatePlaceObjWithPlace(place) {
     placeobj.name = place.name;
     placeobj.lat = place.geometry.location.lat();
     placeobj.lng = place.geometry.location.lng();
     placeobj.formatted_address = place.formatted_address;
 }
 
-function fnDisplayInputAddress(placeobj) {
-    console.log(placeobj.name);
-    var infowindowContent = document.getElementById('infowindow-content');
-    if (fnIsDefined(placeobj.name))
-        infowindowContent.children['place-name'].textContent = placeobj.name;
-    infowindowContent.children['place-address'].textContent = placeobj.formatted_address;
+function fnUpdatePlaceObjWithMarker() {
+    placeobj.name = "Dropped Pin";
+    placeobj.lat = marker.position.lat();
+    placeobj.lng = marker.position.lng();
+    placeobj.formatted_address = placeobj.lat + ", " + placeobj.lng;
 }
 
-function fnGet311NoiseData(placeobj, diameter) {
+function fnDisplayInputAddress() {
+    var infowindowContent = document.getElementById('infowindow-content');
+    if (placeobj.name !== '')
+        infowindowContent.children['place-name'].textContent = placeobj.name;
+    if (placeobj.formatted_address !== '')
+        infowindowContent.children['place-address'].textContent = placeobj.formatted_address;
+}
+
+function fnSetInfoWindowContent(infowindow) {
+    var htmlstr = '<div class="padding-5">'
+                    + '<span><b>' + placeobj.name + '</b></span><br>'
+                    + '<span>' + placeobj.formatted_address + '</span>'
+                + '</div>';
+    infowindow.setContent(htmlstr);
+}
+
+function fnGet311NoiseData(diameter) {
     console.log("fnGet311NoiseData called with placeobj: ", placeobj);
     console.log("diameter: ", diameter);
     if (diameter == undefined)
         diameter = 100;
     console.log("diameter: ", diameter);
     var requestUrl = "https://data.cityofnewyork.us/resource/fhrw-4uyv.json"
-                   + "?$where=within_circle(location, " + placeobj.lat + ", " + placeobj.lng + ", " + diameter + ")"
-                   + "AND complaint_type like '%25Noise%25'";
+                   + "?$select=" + "created_date,complaint_type,descriptor,incident_address,incident_zip,location_type,latitude,longitude"
+                   + "&$where="  + "within_circle(location, " + placeobj.lat + ", " + placeobj.lng + ", " + diameter + ")AND "
+                                 + "complaint_type like '%25Noise%25'";
     console.log("requestUrl:, ", requestUrl);
     $.ajax({
         url: requestUrl,
@@ -216,7 +267,6 @@ function fnGet311NoiseData(placeobj, diameter) {
         console.log("fnGet311NoiseData returned data: ", data);
         fnSuccessCallBack("noise-text", data, diameter);
         noise_data = data;
-        //fnDisplayResultMarker(40,-73);
     });
 }
 
@@ -230,11 +280,9 @@ function fnSuccessCallBack(textid, data, diameter) {
         document.getElementById(textid).innerHTML = "We found " + data.length + " noise complaints nearby.";
 }
 
-function fnDisplayResultButton() {
+function fnDisplayResultButton(resulttype) {
+    console.log("fnDisplayResultButton called with parameter resulttype:", resulttype);
     fnDeleteMarkers();
-    console.log("fnDisplayResultButton called. placeobj: ", placeobj);
-    //fnDisplayResultMarker(placeobj.lat, placeobj.lng);
-    console.log("fnDisplayResultButton says: noise_data = ", noise_data);
     var latvalue,
         lngvalue;
     for (i = 0; i < noise_data.length; i++) {
@@ -242,11 +290,27 @@ function fnDisplayResultButton() {
         lngvalue = Number.parseFloat(noise_data[i].longitude);
         fnDisplayResultMarker(latvalue, lngvalue);
     }
-    fnDisplayResultView();
+    fnDisplayResultView(true, resulttype);
 }
 
-function fnDisplayResultView() {
-    var columnArr = ["Date", "Time", "Noise"];
+function fnGetResultKey(resulttype) {
+    console.log("fnGetResultKey called with parameter resulttype:", resulttype);
+    switch (resulttype) {
+        case 'noise_data':
+            return noise_data[0];
+    }
+}
+
+function fnDisplayResultView(bool, resulttype) {
+    console.log("fnDisplayResultView called with parameter resulttype:", resulttype);
+    if (bool == false) {
+        document.getElementById("result-view").innerHTML = '';
+        return;
+    }
+    var dataSource = fnGetResultKey(resulttype);
+    console.log(dataSource);
+    var columnArr = Object.keys(fnGetResultKey(resulttype));
+    console.log("keys: ", columnArr);
     var itemArr = ["10/12/2017", "00:12AM", "Noise: Construction Before/After Hours (NM1)"]
     var columnHTML = "",
         itemHTML   = "";
@@ -265,31 +329,29 @@ function fnDisplayResultView() {
                      + "<tr>"
                          + columnHTML
                      + "</tr>"
-              + "</tfoot>"
-    ;
+              + "</tfoot>";
     var html_body =
                "<tbody>"
                     + "<tr>"
                         + itemHTML
                     + "</tr>"
-             + "</tbody>"
-    ;
+             + "</tbody>";
     document.getElementById("result-view").innerHTML = html_headfoot + html_body;
 }
 
 function fnDisplayResultMarker(latvalue, lngvalue) {
-    //pos = { lat: 40.71910536292321, lng: -73.99119142426758 };
     pos = { lat: latvalue, lng: lngvalue };
-    var marker = new google.maps.Marker({
+    var resMarker = new google.maps.Marker({
         position: pos,
         icon: {
             url: "images/pin.png",
             scaledSize: new google.maps.Size(32, 32)
         },
         map: map,
+        //title: "ResultMarkerTitle",
         animation: google.maps.Animation.DROP
     });
-    markers.push(marker);
+    markers.push(resMarker);
 }
 
 function fnToggleSectionVisibility(bool) {
