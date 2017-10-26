@@ -1,10 +1,16 @@
 // Global variables
 var placeobj = {};
-var map;
 var noise_data = [];
+var map;
 var markers = [];
 var marker;
 var markerpin = false;
+var column_display_name = {};
+var requestUrl = '';
+
+function fnOnLoad() {
+
+}
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
@@ -12,8 +18,8 @@ function initMap() {
         zoom: 13,
         mapTypeControl: false
     });
-    fnHideBusinessFeatures(map);
-    //fnGetUserGeolocation(map);
+    fnHideBusinessFeatures();
+    fnGetUserGeolocation();
 
     // Create the search box and link it to the UI element.
     var input = document.getElementById('searchbar');
@@ -86,6 +92,7 @@ function initMap() {
         infowindow.close();
         marker.setVisible(false);
         fnDeleteMarkers();
+        fnDisplayResultView(false);
         fnToggleSectionVisibility(false);
         var place = autocomplete.getPlace();
         console.log("place: ", place);
@@ -185,7 +192,7 @@ function fnGetUserGeolocation() {
                 title: "You're here",
                 animation: google.maps.Animation.DROP,
             });
-            markers.push(marker);
+            //markers.push(marker);
         }, function () {
             console.log("The Geolocation service failed.");
         });
@@ -251,17 +258,18 @@ function fnGet311NoiseData(diameter) {
     if (diameter == undefined)
         diameter = 100;
     console.log("diameter: ", diameter);
-    var requestUrl = "https://data.cityofnewyork.us/resource/fhrw-4uyv.json"
+    requestUrl = "https://data.cityofnewyork.us/resource/fhrw-4uyv.json"
                    + "?$select=" + "created_date,complaint_type,descriptor,incident_address,incident_zip,location_type,latitude,longitude"
                    + "&$where="  + "within_circle(location, " + placeobj.lat + ", " + placeobj.lng + ", " + diameter + ")AND "
-                                 + "complaint_type like '%25Noise%25'";
+                                 + "complaint_type like '%25Noise%25'"
+                   + "&$order="  + "created_date DESC";
     console.log("requestUrl:, ", requestUrl);
     $.ajax({
         url: requestUrl,
         type: "GET",
         data: {
-            "$limit": 10000,
-            "$$app_token": "GLPXsrxLKiRZJ6nUO5kwCdw3p"
+            "$limit"        :   10000,
+            "$$app_token"   :   "GLPXsrxLKiRZJ6nUO5kwCdw3p"
         }
     }).done(function (data, diameter) {
         console.log("fnGet311NoiseData returned data: ", data);
@@ -271,8 +279,6 @@ function fnGet311NoiseData(diameter) {
 }
 
 function fnSuccessCallBack(textid, data, diameter) {
-    console.log("fnSuccessCallBack called");
-    console.log("diameter: ", diameter);
     fnToggleSectionVisibility(true);
     if (fnIsNumber(diameter))
         document.getElementById(textid).innerHTML = "We found " + data.length + " noise complaints within " + diameter + " meters nearby.";
@@ -280,9 +286,18 @@ function fnSuccessCallBack(textid, data, diameter) {
         document.getElementById(textid).innerHTML = "We found " + data.length + " noise complaints nearby.";
 }
 
+function fnGetColumnsFromRequestUrl() {
+    var index_start = requestUrl.indexOf('?$select=') + 9;
+    var index_end = requestUrl.indexOf('&$where=');
+    var str = requestUrl.substring(index_start, index_end);
+    var selectArr = str.split(',');
+    return selectArr;
+}
+
 function fnDisplayResultButton(resulttype) {
-    console.log("fnDisplayResultButton called with parameter resulttype:", resulttype);
     fnDeleteMarkers();
+    map.setCenter(marker.position);
+    fnMapZoomIn();
     var latvalue,
         lngvalue;
     for (i = 0; i < noise_data.length; i++) {
@@ -293,8 +308,8 @@ function fnDisplayResultButton(resulttype) {
     fnDisplayResultView(true, resulttype);
 }
 
+//not using this anymore - 1026
 function fnGetResultKey(resulttype) {
-    console.log("fnGetResultKey called with parameter resulttype:", resulttype);
     switch (resulttype) {
         case 'noise_data':
             return noise_data[0];
@@ -302,41 +317,60 @@ function fnGetResultKey(resulttype) {
 }
 
 function fnDisplayResultView(bool, resulttype) {
-    console.log("fnDisplayResultView called with parameter resulttype:", resulttype);
+    var tableHTML = "";
     if (bool == false) {
         document.getElementById("result-view").innerHTML = '';
+        document.getElementById("print-table-button").style.display = "none";
         return;
     }
-    var dataSource = fnGetResultKey(resulttype);
-    console.log(dataSource);
-    var columnArr = Object.keys(fnGetResultKey(resulttype));
-    console.log("keys: ", columnArr);
-    var itemArr = ["10/12/2017", "00:12AM", "Noise: Construction Before/After Hours (NM1)"]
-    var columnHTML = "",
-        itemHTML   = "";
-    for (i = 0; i < columnArr.length; i++) {
-        columnHTML += "<th>" + columnArr[i] + "</th>";
-        itemHTML += "<td>" + itemArr[i] + "</td>";
+    switch (resulttype) {
+        case 'noise_data':
+            tableHTML = fnConvertNoiseDataToHTML();
+            break;
     }
-    console.log(columnHTML);
-    var html_headfoot =
-               "<thead>"
-                    + "<tr>"
-                        + columnHTML
-                    + "</tr>"
-             + "</thead>"
-             + "<tfoot>"
-                     + "<tr>"
-                         + columnHTML
-                     + "</tr>"
-              + "</tfoot>";
-    var html_body =
-               "<tbody>"
-                    + "<tr>"
-                        + itemHTML
-                    + "</tr>"
-             + "</tbody>";
-    document.getElementById("result-view").innerHTML = html_headfoot + html_body;
+    document.getElementById("result-view").innerHTML = tableHTML;
+    document.getElementById("print-table-button").style.display = "block";
+}
+
+function fnConvertNoiseDataToHTML() {
+    var tableHTML = "";
+    var columnArr = fnGetColumnsFromRequestUrl();
+    tableHTML = fnGenerateTableHTML(columnArr, noise_data);
+    return tableHTML;
+}
+
+function fnGenerateTableHTML(columnArr, dataArr) {
+    var headFootHTML = '',
+        bodyHTML = '';
+    for (i = 0; i < columnArr.length; i++) {
+        headFootHTML += "<th>" + columnArr[i] + "</th>";
+    }
+    var columnHTML =
+           "<thead>"
+                + "<tr>"
+                    + headFootHTML
+                + "</tr>"
+         + "</thead>"
+         + "<tfoot>"
+                 + "<tr>"
+                     + headFootHTML
+                 + "</tr>"
+          + "</tfoot>";
+
+    bodyHTML += "<tbody>";
+    for (i = 0; i < dataArr.length; i++) {
+        bodyHTML += "<tr>";
+        //loop through each noise_data value
+        for (j = 0; j < columnArr.length; j++) {
+            if (dataArr[i][columnArr[j]] !== undefined)
+                bodyHTML += "<td>" + dataArr[i][columnArr[j]] + "</td>";
+            else
+                bodyHTML += "<td></td>";
+        }
+        bodyHTML += "</tr>";
+    }
+    bodyHTML += "</tbody>";
+    return columnHTML + bodyHTML;
 }
 
 function fnDisplayResultMarker(latvalue, lngvalue) {
@@ -356,7 +390,8 @@ function fnDisplayResultMarker(latvalue, lngvalue) {
 
 function fnToggleSectionVisibility(bool) {
     console.log("fnToggleSectionVisibility called");
-    var sections = [
+    var sections =
+        [
         "noise-div",
         "crime-div",
         "mouse-div",
@@ -364,7 +399,7 @@ function fnToggleSectionVisibility(bool) {
         "commute-div",
         "parking-div",
         "show-all-div"
-    ];
+        ];
     var div;
     for (i = 0; i < sections.length; i++) {
         div = document.getElementById(sections[i]);
@@ -377,6 +412,7 @@ function fnToggleSectionVisibility(bool) {
     }
 }
 
+//this is not working -1025
 function fnToggleResultViewVisibility(bool) {
     var div = document.getElementById("result-view-container");
     if (bool == true) {
@@ -385,4 +421,12 @@ function fnToggleResultViewVisibility(bool) {
     else {
         div.style.display = "none !important";
     }
+}
+
+function fnPrintData() {
+    var divToPrint = document.getElementById("result-view");
+    newWin = window.open("");
+    newWin.document.write(divToPrint.outerHTML);
+    newWin.print();
+    newWin.close();
 }
