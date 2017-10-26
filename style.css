@@ -25,6 +25,16 @@
     font-weight: bold;
 }
 
+#print-table-button {
+    display: none;
+}
+#result-view-container {
+    font-size: 12px;
+    padding-left: 100px;
+    padding-right: 100px;
+    line-height: 16px;
+}
+
 #searcherror {
     color: #D8000C;
     background-color: #FFD2D2;
