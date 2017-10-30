@@ -14,7 +14,7 @@
     <script src="jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="main.js"></script>
     <script>
-    $( document ).ready(function() {
+    $(document).ready(function() {
         fnOnLoad();
     });
     </script>
@@ -76,54 +76,9 @@
             <input onclick="fnDeleteMarkers()" type=button value="Delete Markers">
         </div>
         -->
-     </div>
-        <div id="result-view-container" class="center">
-            <table id="result-view" cellspacing="0">
-                <!--
-                    <thead>
-                    <tr>
-                        <th>column_name</th>
-                        <th>column_name</th>
-                        <th>column_name</th>
-                        <th>column_name</th>
-                        <th>column_name</th>
-                        <th>column_name</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <th>column_name</th>
-                        <th>column_name</th>
-                        <th>column_name</th>
-                        <th>column_name</th>
-                        <th>column_name</th>
-                        <th>column_name</th>
-                    </tr>
-                </tfoot>
-                <tbody>
-                    <tr>
-                        <td>data</td>
-                        <td>data</td>
-                        <td>data</td>
-                        <td>data</td>
-                        <td>data</td>
-                        <td>data</td>
-                    </tr>
-                </tbody>
-                -->
-            </table>
-            <button id="print-table-button">Print Data</button>
-            <script>
-                $("#print-table-button").click(function () {
-                    fnPrintData();
-                });
-            </script>
-        </div>
+    </div>
     <div class="wrapper960 center tablet-padding">
         <div class="row tablet-padding-top col-gutter-20">
-            <h3 id="summary" class="text-center"></h3>
-            <p id="summary-text" class="text-center text-16">
-            </p>
             <!-- Item Start -->
             <div id="noise-div" class="col-4">
                 <div id="noise-a" href="#map" class="section-container pull-left width-100">
@@ -135,6 +90,9 @@
                         <script>
                             $("#display-noise-button").click(function () {
                                 fnDisplayResultButton('noise_data');
+                                $('html, body').animate({
+                                    scrollTop: $("#table-tools-div").offset().top
+                                }, 800);
                             });
                         </script>
                     </div>
@@ -204,10 +162,59 @@
             <div id="show-all-div" class="row flex center padding-top-30 tablet-padding-top">
             </div>
         </div>
-        <!-- Second Row End -->
+
+        <div id="table-tools-div" class="col-10">
+            <button id="print-table-button" class="table-button">Print Data</button>
+            <button id="export-csv-button" class="table-button">Export to CSV</button>
+            <button id="generate-pdf-button" class="table-button">Generate PDF</button>
+            <script>
+                $("#print-table-button").click(function () {
+                    fnPrintData();
+                });
+                $("#export-csv-button").click(function () {
+                    fnExportCSV();
+                });
+            </script>
+        </div>
+        <div id="result-view-container" class="center">
+            <table id="result-view" cellspacing="0">
+                <!--
+                    <thead>
+                    <tr>
+                        <th>column_name</th>
+                        <th>column_name</th>
+                        <th>column_name</th>
+                        <th>column_name</th>
+                        <th>column_name</th>
+                        <th>column_name</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>column_name</th>
+                        <th>column_name</th>
+                        <th>column_name</th>
+                        <th>column_name</th>
+                        <th>column_name</th>
+                        <th>column_name</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <tr>
+                        <td>data</td>
+                        <td>data</td>
+                        <td>data</td>
+                        <td>data</td>
+                        <td>data</td>
+                        <td>data</td>
+                    </tr>
+                </tbody>
+                -->
+            </table>
+        </div>
     </div>
+
     <!-- Content End -->
-    <!-- Forth Row Start -->
     <div class="row footer">
         <!-- Row Rgba Start -->
         <div class="row rgba padding-top-20">
@@ -291,7 +298,6 @@
         </div>
         <!-- Row Rgba End -->
     </div>
-    <!-- Forth Row End -->
     <script src='https://decorator.io/cdn/navbar.js'></script>
 
 </body>
