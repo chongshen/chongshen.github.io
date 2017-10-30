@@ -15,6 +15,12 @@
 }
 */
 
+#clear-search-a {
+    display: inline-block;
+}
+    #clear-search-a:hover {
+        cursor: pointer;
+    }
 #map {
     height: 600px;
     width: 100%;
@@ -25,8 +31,10 @@
     font-weight: bold;
 }
 
-#print-table-button {
-    display: none;
+#print-table-button,
+#export-table-button,
+#generate-table-button {
+    display: inline-block;
 }
 #result-view-container {
     font-size: 12px;
@@ -35,6 +43,13 @@
     line-height: 16px;
 }
 
+#search-error-text {
+    display: inline-block;
+    color: #D8000C;
+    background-color: #FFD2D2;
+    font-size: 18px;
+    padding: 6px;
+}
 #searcherror {
     color: #D8000C;
     background-color: #FFD2D2;
@@ -46,12 +61,17 @@
     display: none;
 }
 
+#table-tools-div {
+
+}
+
 .center-container {
     position: absolute;
 }
+
 .header,
 .footer{
-  min-height: 560px;
+  min-height: 480px;
   text-shadow: 0 1px 1px rgba(0,0,0,0.3);
   background: url("new_york_background.jpg") no-repeat center center fixed;
   -webkit-background-size: cover;
@@ -101,6 +121,8 @@
 }
 
 #result-view-container {
+    padding-left: 0px;
+    padding-right: 0px;
 }
 
 /*section hover effects*/
@@ -133,10 +155,18 @@
         cursor: pointer;
     }
 
+.table-button {
+    display: inline-block;
+}
+
 /*___colors___*/
 
 .light-silver{
   background: #e8e8e8;
+}
+
+.theme-blue {
+    color: #2196F3;
 }
 
 .background-blue{
