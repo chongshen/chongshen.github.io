@@ -9,7 +9,7 @@ var column_display_name = {};
 var requestUrl = '';
 
 function fnOnLoad() {
-
+    fnDisplayResultView(false);
 }
 
 function initMap() {
@@ -48,13 +48,13 @@ function initMap() {
 
     //marker listener: click
     marker.addListener('click', function () {
-        console.log("marker clicked");
+        //console.log("marker clicked");
         markerpin = true;
         //infowindow.open(map, marker);
     });
     //marker listener: dragging
     marker.addListener('drag', function () {
-        console.log("marker dragged");
+        //console.log("marker dragged");
         infowindow.close();
         fnDeleteMarkers();
         fnDisplayResultView(false);
@@ -64,7 +64,7 @@ function initMap() {
     });
     //marker listener: dragend
     marker.addListener('dragend', function () {
-        console.log("marker drag ended");
+        //console.log("marker drag ended");
         infowindow.close();
         fnDeleteMarkers();
         fnDisplayResultView(false);
@@ -78,12 +78,12 @@ function initMap() {
     });
     //marker listener: mouseover/hover
     marker.addListener('mouseover', function () {
-        console.log("marker hovered");
+        //console.log("marker hovered");
         infowindow.open(map, marker);
     });
     //marker listener: mouseout
     marker.addListener('mouseout', function () {
-        console.log("marker mouseout");
+        //console.log("marker mouseout");
         if (markerpin == false)
             infowindow.close();
     });
@@ -98,6 +98,10 @@ function initMap() {
         console.log("place: ", place);
         if (!place.geometry) {
             fnSearchError(true, "Please make sure to input an actual address. ");
+            return;
+        }
+        if (!fnNewYorkAddress(place)) {
+            fnSearchError(true, "Sorry, at this moment APTMaps only supports New York City 4 borough addresses. ");
             return;
         }
         fnSearchError(false, '');
@@ -119,6 +123,20 @@ function initMap() {
         fnDisplayInputAddress();
         fnGet311NoiseData(undefined);
     });
+}
+
+function fnNewYorkAddress(place) {
+    var nycBoroughArr = ['Manhattan', 'Queens', 'Brooklyn', 'Bronx', 'Richmond County', 'New York'];
+    for (i = 0; i < place.address_components.length; i++) {
+        for (var key in place.address_components[i]) {
+            if (nycBoroughArr.indexOf(place.address_components[i][key]) >= 0){
+                console.log("address is in NYC");
+                return true;
+            }
+        }
+    }
+    console.log("address is not in NYC");
+    return false;
 }
 
 function fnMapZoomIn() {
@@ -213,11 +231,11 @@ function fnSearchError(bool, message) {
     var div = document.getElementById('searcherror_div');
     if (bool == true) {
         div.style.display = "block";
-        document.getElementById("searcherror").innerHTML = message;
+        document.getElementById("searcherror_div").innerHTML = "<p id='search-error-text'>" + message + "</p>";
     }
     else {
         div.style.display = "none";
-        document.getElementById("searcherror").innerHTML = message;
+        document.getElementById("searcherror_div").innerHTML = "<p id='search-error-text'>" + message + "</p>";
     }
 
 }
@@ -280,10 +298,19 @@ function fnGet311NoiseData(diameter) {
 
 function fnSuccessCallBack(textid, data, diameter) {
     fnToggleSectionVisibility(true);
-    if (fnIsNumber(diameter))
+    if (fnIsNumber(diameter)) {
         document.getElementById(textid).innerHTML = "We found " + data.length + " noise complaints within " + diameter + " meters nearby.";
-    else
+    }
+    else {
         document.getElementById(textid).innerHTML = "We found " + data.length + " noise complaints nearby.";
+    }
+
+    if (data.length == 0) {
+        document.getElementById("display-noise-button").innerHTML = "No Results Available";
+    }
+    else {
+        document.getElementById("display-noise-button").innerHTML = "Display Results";
+    }
 }
 
 function fnGetColumnsFromRequestUrl() {
@@ -299,28 +326,30 @@ function fnDisplayResultButton(resulttype) {
     map.setCenter(marker.position);
     fnMapZoomIn();
     var latvalue,
-        lngvalue;
+        lngvalue,
+        title;
+    if (noise_data.length == 0) {
+        fnNoResultsAvailable();
+        return;
+    }
     for (i = 0; i < noise_data.length; i++) {
         latvalue = Number.parseFloat(noise_data[i].latitude);
         lngvalue = Number.parseFloat(noise_data[i].longitude);
-        fnDisplayResultMarker(latvalue, lngvalue);
+        title = noise_data[i].descriptor;
+        fnDisplayResultMarker(latvalue, lngvalue, title);
     }
     fnDisplayResultView(true, resulttype);
 }
 
-//not using this anymore - 1026
-function fnGetResultKey(resulttype) {
-    switch (resulttype) {
-        case 'noise_data':
-            return noise_data[0];
-    }
+function fnNoResultsAvailable() {
+
 }
 
 function fnDisplayResultView(bool, resulttype) {
     var tableHTML = "";
     if (bool == false) {
         document.getElementById("result-view").innerHTML = '';
-        document.getElementById("print-table-button").style.display = "none";
+        document.getElementById("table-tools-div").style.display = "none";
         return;
     }
     switch (resulttype) {
@@ -329,7 +358,7 @@ function fnDisplayResultView(bool, resulttype) {
             break;
     }
     document.getElementById("result-view").innerHTML = tableHTML;
-    document.getElementById("print-table-button").style.display = "block";
+    document.getElementById("table-tools-div").style.display = "block";
 }
 
 function fnConvertNoiseDataToHTML() {
@@ -373,7 +402,7 @@ function fnGenerateTableHTML(columnArr, dataArr) {
     return columnHTML + bodyHTML;
 }
 
-function fnDisplayResultMarker(latvalue, lngvalue) {
+function fnDisplayResultMarker(latvalue, lngvalue, title) {
     pos = { lat: latvalue, lng: lngvalue };
     var resMarker = new google.maps.Marker({
         position: pos,
@@ -382,7 +411,7 @@ function fnDisplayResultMarker(latvalue, lngvalue) {
             scaledSize: new google.maps.Size(32, 32)
         },
         map: map,
-        //title: "ResultMarkerTitle",
+        title: title,
         animation: google.maps.Animation.DROP
     });
     markers.push(resMarker);
@@ -412,21 +441,14 @@ function fnToggleSectionVisibility(bool) {
     }
 }
 
-//this is not working -1025
-function fnToggleResultViewVisibility(bool) {
-    var div = document.getElementById("result-view-container");
-    if (bool == true) {
-        div.style.display = "block !important";
-    }
-    else {
-        div.style.display = "none !important";
-    }
-}
-
 function fnPrintData() {
     var divToPrint = document.getElementById("result-view");
     newWin = window.open("");
     newWin.document.write(divToPrint.outerHTML);
     newWin.print();
     newWin.close();
+}
+
+function fnExportCSV() {
+    console.log(noise_data);
 }
