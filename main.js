@@ -451,4 +451,21 @@ function fnPrintData() {
 
 function fnExportCSV() {
     console.log(noise_data);
+    var columnArr = fnGetColumnsFromRequestUrl();
+    var csv = columnArr.join(',') + '\n';
+    var row = '';
+    for (i = 0; i < noise_data.length; i++) {
+        for (j = 0; j < columnArr.length; j++) {
+            if (noise_data[i][columnArr[j]] !== undefined)
+                csv += noise_data[i][columnArr[j]] + ',';
+            else
+                csv += ',';
+        }
+        csv += '\n';
+    }
+    var hiddenElement = document.createElement('a');
+    hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+    hiddenElement.target = '_blank';
+    hiddenElement.download = 'APTMaps_Download.csv';
+    hiddenElement.click();
 }
