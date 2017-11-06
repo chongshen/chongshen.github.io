@@ -32,8 +32,7 @@
 }
 
 #print-table-button,
-#export-table-button,
-#generate-table-button {
+#export-csv-button {
     display: inline-block;
 }
 #result-view-container {
