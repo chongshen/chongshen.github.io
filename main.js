@@ -127,7 +127,7 @@ function initMap() {
 
 function fnNewYorkAddress(place) {
     var nycBoroughArr = ['Manhattan', 'Queens', 'Brooklyn', 'Bronx', 'Richmond County', 'New York'];
-    for (i = 0; i < place.address_components.length; i++) {
+    for (var i = 0; i < place.address_components.length; i++) {
         for (var key in place.address_components[i]) {
             if (nycBoroughArr.indexOf(place.address_components[i][key]) >= 0){
                 console.log("address is in NYC");
@@ -332,7 +332,7 @@ function fnDisplayResultButton(resulttype) {
         fnNoResultsAvailable();
         return;
     }
-    for (i = 0; i < noise_data.length; i++) {
+    for (var i = 0; i < noise_data.length; i++) {
         latvalue = Number.parseFloat(noise_data[i].latitude);
         lngvalue = Number.parseFloat(noise_data[i].longitude);
         title = noise_data[i].descriptor;
@@ -371,7 +371,7 @@ function fnConvertNoiseDataToHTML() {
 function fnGenerateTableHTML(columnArr, dataArr) {
     var headFootHTML = '',
         bodyHTML = '';
-    for (i = 0; i < columnArr.length; i++) {
+    for (var i = 0; i < columnArr.length; i++) {
         headFootHTML += "<th>" + columnArr[i] + "</th>";
     }
     var columnHTML =
@@ -387,10 +387,10 @@ function fnGenerateTableHTML(columnArr, dataArr) {
           + "</tfoot>";
 
     bodyHTML += "<tbody>";
-    for (i = 0; i < dataArr.length; i++) {
+    for (var i = 0; i < dataArr.length; i++) {
         bodyHTML += "<tr>";
         //loop through each noise_data value
-        for (j = 0; j < columnArr.length; j++) {
+        for (var j = 0; j < columnArr.length; j++) {
             if (dataArr[i][columnArr[j]] !== undefined)
                 bodyHTML += "<td>" + dataArr[i][columnArr[j]] + "</td>";
             else
@@ -430,7 +430,7 @@ function fnToggleSectionVisibility(bool) {
         "show-all-div"
         ];
     var div;
-    for (i = 0; i < sections.length; i++) {
+    for (var i = 0; i < sections.length; i++) {
         div = document.getElementById(sections[i]);
         if (bool == true) {
             div.style.display = "block";
@@ -454,8 +454,8 @@ function fnExportCSV() {
     var columnArr = fnGetColumnsFromRequestUrl();
     var csv = columnArr.join(',') + '\n';
     var row = '';
-    for (i = 0; i < noise_data.length; i++) {
-        for (j = 0; j < columnArr.length; j++) {
+    for (var i = 0; i < noise_data.length; i++) {
+        for (var j = 0; j < columnArr.length; j++) {
             if (noise_data[i][columnArr[j]] !== undefined)
                 csv += noise_data[i][columnArr[j]] + ',';
             else
